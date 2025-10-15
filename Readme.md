@@ -79,7 +79,7 @@ Messages have the following json format:
 ```json
 {
     "id": "<uuid>",                     # Unic identifyer 
-    "type": "message" | "ack",          # Type of the message
+    "type": "<type>",                   # Type of the message: message | ack
     "payload": "...",                   # for message type only
     "send_and_ack_time_ns": 1234567890  # for ack from client to server only
 }

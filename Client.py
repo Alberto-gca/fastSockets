@@ -86,14 +86,15 @@ class Client(FastSocket):
 
 if __name__ == "__main__":
     async def main():
-        client = Client()
+        import socket
+        client = Client(logfunc=None)
         client.set_addr('localhost', 8888)
         try:
             await client.connect()
 
             for i in range(5):
-                await client.send({"message": f"Hello, server {i}!"})
-                await asyncio.sleep(5)
+                await client.send({"message": f"Hello {i} from {socket.gethostname()}!"})
+                await asyncio.sleep(2)
         except ConnectionError:
             print("Connection error occurred")
         finally:
