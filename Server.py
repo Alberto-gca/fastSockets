@@ -82,7 +82,8 @@ if __name__ == "__main__":
     async def print_messages(server):
         while True:
             msg = await server._in_queue.get()
-            print(f"Received message: {msg['payload']} with latency: {msg['latency_ns']} ns")
+            # print(f"Received message: {msg['payload']} with latency: {msg['latency_ns']} ns")
+            print(f"Received message with latency: {msg['latency_ns']} ns")
     
     async def main():
         asyncio.create_task(print_messages(server))        

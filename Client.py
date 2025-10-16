@@ -3,7 +3,106 @@ import asyncio
 import json
 import uuid
 import time
- 
+
+mensajote = {
+    "measurementDeltaTime": 996.0,
+    "position": {
+        "xCoordinate": {
+            "value": 0.09388985173844638,
+            "confidence": 1
+        },
+        "yCoordinate": {
+            "value": 0.06514550737208115,
+            "confidence": 1
+        },
+        "zCoordinate": {
+            "value": 0.0,
+            "confidence": 1
+        }
+    },
+    "objectId": 82,
+    "velocity": {
+        "polarVelocity": {
+            "velocityMagnitude": {
+                "speedValue": 0,
+                "speedConfidence": 0
+            },
+            "velocityDirection": {
+                "value": 0,
+                "confidence": 0
+            }
+        },
+        "cartesianVelocity": {
+            "xVelocity": {
+                "value": 16383,
+                "confidence": 1
+            },
+            "yVelocity": {
+                "value": 16383,
+                "confidence": 1
+            },
+            "zVelocity": {
+                "value": 16383,
+                "confidence": 126
+            }
+        }
+    },
+    "acceleration": {
+        "polarAcceleration": {
+            "accelerationMagnitude": {
+                "accelerationMagnitudeValue": 0,
+                "accelerationConfidence": 0
+            },
+            "accelerationDirection": {
+                "value": 0,
+                "confidence": 0
+            }
+        },
+        "cartesianAcceleration": {
+            "xAcceleration": {
+                "value": 161,
+                "confidence": 1
+            },
+            "yAcceleration": {
+                "value": 161,
+                "confidence": 1
+            },
+            "zAcceleration": {
+                "value": 161,
+                "confidence": 1
+            }
+        }
+    },
+    "angles": {
+        "zAngle": {
+            "value": 3598.128858933496,
+            "confidence": 95
+        }
+    },
+    "objectDimensionZ": {
+        "value": 256,
+        "confidence": 1
+    },
+    "objectDimensionY": {
+        "value": 256,
+        "confidence": 1
+    },
+    "objectDimensionX": {
+        "value": 256,
+        "confidence": 1
+    },
+    "objectAge": 46.0598892923465,
+    "objectPerceptionQuality": 15,
+    "classification": [
+        {
+            "objectClass": {
+                "otherSubClass": 0
+            },
+            "confidence": 101
+        }
+    ]
+}
+
 class Client(FastSocket):
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,9 +142,9 @@ class Client(FastSocket):
                 "payload": data,
             }
 
+            send_time_ns = time.time_ns()
             self.writer.write((json.dumps(message) + "\n").encode())
             await self.writer.drain()
-            send_time_ns = time.time_ns()
             await self._ack_pool_put(message["id"], send_time_ns)
             self.log(f"Sent: {message['id']} at {send_time_ns}")
 
@@ -92,9 +191,10 @@ if __name__ == "__main__":
         try:
             await client.connect()
 
-            for i in range(5):
-                await client.send({"message": f"Hello {i} from {socket.gethostname()}!"})
-                await asyncio.sleep(2)
+            for i in range(1000):
+                # await client.send({"message": f"Hello {i} from {socket.gethostname()}!"})
+                await client.send(mensajote)
+                await asyncio.sleep(0.005)
         except ConnectionError:
             print("Connection error occurred")
         finally:
@@ -104,3 +204,5 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Client stopped by user")
+
+
